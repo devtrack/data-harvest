@@ -1,9 +1,13 @@
-Data harvest for OSINT
+# Data Harvest
 
-Just google Plus profiles for now
+Data harvesting for OSINT
 
-sudo apt-get install pip
-pip install geocoder lxml
+### Installation
 
-python main.py username
-python main.py first_name last_name
+```sh
+$ apt-get install pip
+$ pip install geocoder lxml
+
+$ python main.py username
+$ python main.py first_name last_name
+```
