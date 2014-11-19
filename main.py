@@ -42,7 +42,7 @@ class Person:
             self.username = input[1]
             self.googleAccount = GoogleAccount(input)
 
-class Cible:
+class Target:
 
     def __init__(self, input):
 
@@ -91,11 +91,11 @@ if __name__ == '__main__':
         '''c = Geodata(sys.argv[1])
         coords = c.getCoords()
         print str(coords[0]) + ", " + str(coords[1])'''
-        c = Cible(sys.argv[1])
+        c = Target(sys.argv[1])
         #for u in c.relatedUsers: print u.username + " [" + u.googleAccount.id + "] : " + u.googleAccount.photo
 
     else:
-        c = Cible(sys.argv[1]+" "+sys.argv[2])
+        c = Target(sys.argv[1]+" "+sys.argv[2])
         #for u in c.relatedUsers: print u.username + " [" + u.googleAccount.id + "] : " + u.googleAccount.photo
         '''c = Geodata([sys.argv[1], sys.argv[2]])
         address = c.getAddress()
