@@ -10,7 +10,7 @@ import re
 from unicodedata import normalize
 
 # regular expression
-googlePlusQuery = re.compile('\"([0-9]+)\"\,\,\"https\:\/\/plus\.google\.com\/[0-9]+\"\]\n\,\[\"([\w\ \'\-]+)\"', re.UNICODE)
+googlePlusQuery = re.compile('\"([0-9]+)\"\,\,\"https\:\/\/plus\.google\.com\/[0-9]+\"\]\n\,\[\"([\w\ \'\-]+)\"\,{8}\"(https\:)?(\/\/[a-zA-Z0-9\-\/\_\.]+)\"', re.UNICODE)
 googlePlusToken = re.compile('\"\w{30,}', re.UNICODE)
 
 class Geolocation:
@@ -79,7 +79,7 @@ class Target:
 
 
 
-        for user in userList: print user[0] + " : " + user[1]
+        for user in userList: print user[0] + " : " + user[1] + " " + user[2] + user[3]
 
         return userList
 
