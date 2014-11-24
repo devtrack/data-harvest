@@ -1,17 +1,35 @@
 <html>
   <head>
-    <link rel="stylesheet" href="css/metro-bootstrap-responsive.min.css">
+    <link rel="stylesheet" href="css/metro-bootstrap.min.css">
+
     <script src="js/jquery/jquery.min.js"></script>
     <script src="js/jquery/jquery.widget.min.js"></script>
     <script src="js/metro.min.js"></script>
+    <script src="js/metro-notify.js"></script>
+
+    <style>
+      body {font-size:12px}
+      .icon{width:120px;height:120px}
+    </style>
   </head>
-  <body>
+  <body class="metro">
     <center>
-      <input id="name" type="text"/>
-      <button onClick="pyBridge.search($('#name').val());">Search</button>
-      <ul id="searchResult"></ul>
+      <div>
+        <label>Search for someone</label>
+        <input id="name" type="text"/>
+      </div>
+      <div id="searchResult" class="listview"></div>
     </center>
     <script>
+
+      $("#name").bind("keypress", {}, search);
+      function search(e) {
+        var code = (e.keyCode ? e.keyCode : e.which);
+        if (code == 13) { //Enter keycode
+          e.preventDefault();
+          pyBridge.search($('#name').val());
+        }
+      }
 
       function searchCallback(results) {
 
@@ -21,14 +39,16 @@
 
           var html = $('#searchResult').html();
 
-          var result = '<li><img src="' + results[i][2] + '" width="100" height="100"/>';
-          result += results[i][0] + '</li>';
+          var result = '<div class="list" onclick="selection($(this))"><div class="list-content"><img src="' + results[i][2] + '" class="icon">';
+          result += '<div class="data"><span class="list-title">' + results[i][0] + '</span><br><span class="list-remark">' + results[i][1] + '</span></div></div></div>';
 
           $('#searchResult').html(html + result);
-
         }
-
+        var note = $.Notify.show("Search done for " + $('#name').val(), "Info :");
+        $('#name').val("");
       }
+
+      function selection (obj) { obj.toggleClass("selected"); }
 
     </script>
   </body>

@@ -5,13 +5,12 @@ Data harvesting for OSINT
 ### Installation
 
 ```sh
-apt-get install pip
+apt-get install pip pyqt4-dev-tools
 pip install geocoder lxml
 ```
 
 ### Use
 
 ```sh
-python main.py username
-python main.py first_name last_name
+python main.py
 ```

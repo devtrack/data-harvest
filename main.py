@@ -109,8 +109,11 @@ if __name__ == '__main__':
     f.close()
 
     # Replace path file for include
+    html = html.replace("css/metro-bootstrap.min.css", "file://" + sys.path[0] + "/css/metro-bootstrap.min.css")
     html = html.replace("js/jquery/jquery.min.js", "file://" + sys.path[0] + "/js/jquery/jquery.min.js")
-
+    html = html.replace("js/jquery/jquery.widget.min.js", "file://" + sys.path[0] + "/js/jquery/jquery.widget.min.js")
+    html = html.replace("js/metro.min.js", "file://" + sys.path[0] + "/js/metro.min.js")
+    html = html.replace("js/metro-notify.js", "file://" + sys.path[0] + "/js/metro-notify.js")
 
     app = QtGui.QApplication([""])
     webView = QtWebKit.QWebView()
