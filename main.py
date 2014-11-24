@@ -118,6 +118,8 @@ if __name__ == '__main__':
     app = QtGui.QApplication([""])
     webView = QtWebKit.QWebView()
     mainFrame = webView.page().mainFrame()
+    mainFrame.setScrollBarPolicy(QtCore.Qt.Horizontal, QtCore.Qt.ScrollBarAlwaysOff)
+    mainFrame.setScrollBarPolicy(QtCore.Qt.Vertical, QtCore.Qt.ScrollBarAlwaysOff)
 
     bridge = Bridge()
     mainFrame.addToJavaScriptWindowObject("pyBridge", bridge)
