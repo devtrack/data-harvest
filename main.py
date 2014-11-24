@@ -5,12 +5,13 @@ import urllib
 import geocoder
 import requests
 import json
-import lxml.html as html
 import re
-from unicodedata import normalize
+
+# Adding gui for project
+from PyQt4 import QtCore, QtGui, QtWebKit
 
 # regular expression
-googlePlusQuery = re.compile('\"([0-9]+)\"\,\,\"https\:\/\/plus\.google\.com\/[0-9]+\"\]\n\,\[\"([\w\ \'\-]+)\"\,{8}\"(https\:)?(\/\/[a-zA-Z0-9\-\/\_\.]+)\"', re.UNICODE)
+googlePlusQuery = re.compile('\"([0-9]+)\"\,\,\"https\:\/\/plus\.google\.com\/[0-9]+\"\]\n\,\[\"([\w\ \'\-]+)\"\,{8}\"((?:https\:)?\/\/[a-zA-Z0-9\-\/\_\.]+)\"', re.UNICODE)
 googlePlusToken = re.compile('\"\w{30,}', re.UNICODE)
 
 class Geolocation:
@@ -22,6 +23,10 @@ class Geolocation:
 
     def getCoords(self): return self.data.lat, self.data.lng
     def getAddress(self): return self.data.address
+
+    '''c = Geodata(sys.argv[1])
+    coords = c.getCoords()
+    print str(coords[0]) + ", " + str(coords[1])'''
 
 class GoogleAccount:
 
@@ -46,14 +51,12 @@ class Target:
 
     def __init__(self, input):
 
-        if (type(input) == str):
+        self.username = str(input)
 
-            self.username = input
+        self.relatedUsers = []
 
-            self.relatedUsers = []
-
-            users = self.googlePlusSearch(self.username)
-            for user in users: self.relatedUsers.append(Person(user, "googlePlus"))
+        users = self.googlePlusSearch(self.username)
+        for user in users: self.relatedUsers.append(Person(user, "googlePlus"))
 
     def googlePlusSearch(self, username):
 
@@ -70,33 +73,51 @@ class Target:
             parsed = re.findall(googlePlusQuery, text)
             count = len(parsed)
 
-            for p in parsed: userList.append(p)
+            for p in parsed:
+
+                ident = p[0]
+                user = p[1]
+                photo = p[2]
+
+                if photo.startswith("https:") == False: photo = "https:" + photo
+                userList.append([ident, user, photo])
 
             pageToken = re.search(googlePlusToken, text)
             if pageToken == None: break
             else:
                 data = {'f.req' : '[["'+ username +'",2,,,,,,],['+ pageToken.group() +'"],[,,,,,[,,,,[,],]],,,]'}
 
-
-
-        for user in userList: print user[0] + " : " + user[1] + " " + user[2] + user[3]
-
         return userList
+
+class Bridge(QtCore.QObject):
+
+    @QtCore.pyqtSlot(str)
+    def search(self, target):
+
+        #QtGui.QMessageBox.information(None, "Info", msg)
+        c = Target(target)
+        retour = []
+        for u in c.relatedUsers:
+            retour.append([u.username, u.googleAccount.id, u.googleAccount.photo])
+
+        mainFrame.evaluateJavaScript("searchCallback(%s)" % json.dumps(retour))
 
 if __name__ == '__main__':
 
-    if len(sys.argv) <= 1:
-        sys.exit()
-    elif len(sys.argv) == 2:
-        '''c = Geodata(sys.argv[1])
-        coords = c.getCoords()
-        print str(coords[0]) + ", " + str(coords[1])'''
-        c = Target(sys.argv[1])
-        #for u in c.relatedUsers: print u.username + " [" + u.googleAccount.id + "] : " + u.googleAccount.photo
+    f = open(sys.path[0] + "/gui.html")
+    html = f.read()
+    f.close()
 
-    else:
-        c = Target(sys.argv[1]+" "+sys.argv[2])
-        #for u in c.relatedUsers: print u.username + " [" + u.googleAccount.id + "] : " + u.googleAccount.photo
-        '''c = Geodata([sys.argv[1], sys.argv[2]])
-        address = c.getAddress()
-        print str(address)'''
+    app = QtGui.QApplication([""])
+    webView = QtWebKit.QWebView()
+    mainFrame = webView.page().mainFrame()
+
+    bridge = Bridge()
+    mainFrame.addToJavaScriptWindowObject("pyBridge", bridge)
+    webView.setHtml(html)
+
+    window = QtGui.QMainWindow()
+    window.setCentralWidget(webView)
+    window.show()
+
+    sys.exit(app.exec_())
