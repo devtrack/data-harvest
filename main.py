@@ -108,6 +108,10 @@ if __name__ == '__main__':
     html = f.read()
     f.close()
 
+    # Replace path file for include
+    html = html.replace("js/jquery/jquery.min.js", "file://" + sys.path[0] + "/js/jquery/jquery.min.js")
+
+
     app = QtGui.QApplication([""])
     webView = QtWebKit.QWebView()
     mainFrame = webView.page().mainFrame()
