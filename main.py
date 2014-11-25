@@ -6,7 +6,6 @@ import geocoder
 import requests
 import json
 import re
-import threading
 
 # Adding gui for project
 from PyQt4 import QtCore, QtGui, QtWebKit
@@ -101,18 +100,14 @@ class Bridge(QtCore.QObject):
     def search(self, target):
 
         self.c = Target(target)
-        app.connect(self.c, QtCore.SIGNAL("threadDone(QString)"), self.searchThreadDone)
+        self.connect(self.c, QtCore.SIGNAL("threadDone(QString)"), self.searchThreadDone)
 
         self.c.start()
-        #retour = []
-        #for u in c.relatedUsers:
-        #    retour.append([u.username, u.googleAccount.id, u.googleAccount.photo])
-
-        #mainFrame.evaluateJavaScript("searchCallback(%s)" % json.dumps(retour))
 
     def searchThreadDone(self, info):
 
         mainFrame.evaluateJavaScript("searchCallback(%s)" % info)
+        self.disconnect(self.c, QtCore.SIGNAL("threadDone(QString)"), self.searchThreadDone)
 
 if __name__ == '__main__':
 
@@ -122,16 +117,14 @@ if __name__ == '__main__':
     desktop = QtGui.QDesktopWidget()
     geom = desktop.availableGeometry()
 
-    # Webkit and bridge
+    # Webkit view setting
     webView = QtWebKit.QWebView()
     mainFrame = webView.page().mainFrame()
     mainFrame.setScrollBarPolicy(QtCore.Qt.Horizontal, QtCore.Qt.ScrollBarAlwaysOff)
     mainFrame.setScrollBarPolicy(QtCore.Qt.Vertical, QtCore.Qt.ScrollBarAlwaysOff)
 
-    # Thread setting
-    bridge = Bridge()
-
     # Bridge
+    bridge = Bridge()
     mainFrame.addToJavaScriptWindowObject("pyBridge", bridge)
     webView.load(QtCore.QUrl("file://" + sys.path[0] + "/gui.html"))
 
