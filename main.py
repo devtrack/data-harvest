@@ -113,6 +113,8 @@ if __name__ == '__main__':
     html = html.replace("js/jquery/jquery.widget.min.js", "file://" + sys.path[0] + "/js/jquery/jquery.widget.min.js")
     html = html.replace("js/metro.min.js", "file://" + sys.path[0] + "/js/metro.min.js")
     html = html.replace("js/metro-notify.js", "file://" + sys.path[0] + "/js/metro-notify.js")
+    html = html.replace("js/jquery.mousewheel.js", "file://" + sys.path[0] + "/js/jquery.mousewheel.js")
+    html = html.replace("css/iconFont.min.css", "file://" + sys.path[0] + "/css/iconFont.min.css")
 
     app = QtGui.QApplication([""])
 

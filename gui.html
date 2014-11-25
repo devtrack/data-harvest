@@ -1,29 +1,86 @@
 <html>
   <head>
     <link rel="stylesheet" href="css/metro-bootstrap.min.css">
+    <link rel="stylesheet" href="css/iconFont.min.css">
 
     <script src="js/jquery/jquery.min.js"></script>
     <script src="js/jquery/jquery.widget.min.js"></script>
     <script src="js/metro.min.js"></script>
     <script src="js/metro-notify.js"></script>
+    <script src="js/jquery.mousewheel.js"></script>
 
     <style>
       body {font-size:12px}
       .icon{width:120px;height:120px}
-      .scrollbar{width:40%;float:right;margin-top:20px}
+      #scrollbox
+      {
+        float: left;
+        height: 555px;
+        width: 40%;
+        background: #F5F5F5;
+        overflow-y: scroll;
+        float:right;
+      }
+      #scrollbox::-webkit-scrollbar-track
+      {
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        background-color: #F5F5F5;
+      }
+
+      #scrollbox::-webkit-scrollbar
+      {
+        width: 10px;
+        background-color: #F5F5F5;
+      }
+
+      #scrollbox::-webkit-scrollbar-thumb
+      {
+        background-color: #0ae;
+
+        background-image: -webkit-gradient(linear, 0 0, 0 100%,
+          color-stop(.5, rgba(255, 255, 255, .2)),
+          color-stop(.5, transparent), to(transparent));
+        }
       .list-content{text-align:left}
     </style>
   </head>
   <body class="metro">
-    <center>
-      <div>
-        <label>Search for someone</label>
-        <input id="name" type="text"/>
+    <nav class="navigation-bar dark">
+      <div class="navigation-bar-content">
+        <button href="#" class="element"><span class="icon-grid-view"></span> Data harvest </button>
+        <span class="element-divider"></span>
+        <a class="pull-menu" href="#"></a>
+
+        <div class="no-tablet-portrait">
+          <button class="element brand" href="#"><span class="icon-printer"></span></button>
+          <span class="element-divider"></span>
+
+          <div class="element input-element">
+            <form>
+              <div class="input-control text">
+                <input id="name" type="text" placeholder="Search...">
+                <button class="btn-search"></button>
+              </div>
+            </form>
+          </div>
+
+          <div class="element place-right">
+            <a class="dropdown-toggle" href="#">
+              <span class="icon-cog"></span>
+            </a>
+            <ul class="dropdown-menu place-right" data-role="dropdown">
+              <li><a href="#">Products</a></li>
+              <li><a href="#">Download</a></li>
+              <li><a href="#">Support</a></li>
+              <li><a href="#">Buy Now</a></li>
+            </ul>
+          </div>
+        </div>
       </div>
+    </nav>
       <div class="scrollbar">
-        <div id="searchResult" class="listview-outlook" data-scroll="vertical"></div>
+        <div id="scrollbox" class="listview-outlook"></div>
       </div>
-    </center>
     <script>
 
       $("#name").bind("keypress", {}, search);
@@ -37,17 +94,17 @@
 
       function searchCallback(results) {
 
-        $('#searchResult').html("");
+        $('#scrollbox').html("");
 
         for (var i in results) {
 
-          var html = $('#searchResult').html();
+          var html = $('#scrollbox').html();
 
           var result = '<div class="list" onclick="selection($(this))"><div class="list-content"><img src="' + results[i][2] + '" class="icon">';
           result += '<div class="data"><span class="list-title">' + results[i][0] + '</span>';
           result += '<span class="list-subtitle">' + results[i][1] + '</span><span class="list-remark">Google Plus Account</div></div></div>';
 
-          $('#searchResult').html(html + result);
+          $('#scrollbox').html(html + result);
         }
         var note = $.Notify.show("Search done for " + $('#name').val(), "Info :");
         $('#name').val("");
