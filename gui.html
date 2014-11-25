@@ -64,6 +64,8 @@
             </form>
           </div>
 
+          <div id="console" class="element output-element"></div>
+
           <div class="element place-right">
             <a class="dropdown-toggle" href="#">
               <span class="icon-cog"></span>
@@ -83,12 +85,19 @@
       </div>
     <script>
 
+      var searchString = "";
+
       $("#name").bind("keypress", {}, search);
       function search(e) {
         var code = (e.keyCode ? e.keyCode : e.which);
-        if (code == 13) { //Enter keycode
+        if (code == 13) {
+
           e.preventDefault();
-          pyBridge.search($('#name').val());
+          searchString = $('#name').val();
+          pyBridge.search(searchString);
+          $('#name').val("");
+          $("#console").html("searching \"" + searchString + "\"")
+
         }
       }
 
@@ -106,8 +115,8 @@
 
           $('#scrollbox').html(html + result);
         }
-        var note = $.Notify.show("Search done for " + $('#name').val(), "Info :");
-        $('#name').val("");
+        $("#console").html("");
+        var note = $.Notify.show("Search done for " + searchString, "Info :");
       }
 
       function selection (obj) { obj.toggleClass("marked"); }

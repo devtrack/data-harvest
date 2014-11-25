@@ -6,6 +6,7 @@ import geocoder
 import requests
 import json
 import re
+import threading
 
 # Adding gui for project
 from PyQt4 import QtCore, QtGui, QtWebKit
@@ -47,16 +48,18 @@ class Person:
             self.username = input[1]
             self.googleAccount = GoogleAccount(input)
 
-class Target:
+class Target(QtCore.QThread):
 
-    def __init__(self, input):
+    def __init__(self, target):
 
-        self.username = str(input)
-
+        QtCore.QThread.__init__(self)
+        self.username = str(target)
         self.relatedUsers = []
 
+    def run(self):
+
         users = self.googlePlusSearch(self.username)
-        for user in users: self.relatedUsers.append(Person(user, "googlePlus"))
+        self.emit(QtCore.SIGNAL("threadDone(QString)"), json.dumps(users))
 
     def googlePlusSearch(self, username):
 
@@ -80,7 +83,7 @@ class Target:
                 photo = p[2]
 
                 if photo.startswith("https:") == False: photo = "https:" + photo
-                userList.append([ident, user, photo])
+                userList.append([user, ident, photo])
 
             pageToken = re.search(googlePlusToken, text)
             if pageToken == None: break
@@ -91,30 +94,27 @@ class Target:
 
 class Bridge(QtCore.QObject):
 
+    def __init__(self):
+        QtCore.QObject.__init__(self)
+
     @QtCore.pyqtSlot(str)
     def search(self, target):
 
-        c = Target(target)
-        retour = []
-        for u in c.relatedUsers:
-            retour.append([u.username, u.googleAccount.id, u.googleAccount.photo])
+        self.c = Target(target)
+        app.connect(self.c, QtCore.SIGNAL("threadDone(QString)"), self.searchThreadDone)
 
-        mainFrame.evaluateJavaScript("searchCallback(%s)" % json.dumps(retour))
+        self.c.start()
+        #retour = []
+        #for u in c.relatedUsers:
+        #    retour.append([u.username, u.googleAccount.id, u.googleAccount.photo])
+
+        #mainFrame.evaluateJavaScript("searchCallback(%s)" % json.dumps(retour))
+
+    def searchThreadDone(self, info):
+
+        mainFrame.evaluateJavaScript("searchCallback(%s)" % info)
 
 if __name__ == '__main__':
-
-    f = open(sys.path[0] + "/gui.html")
-    html = f.read()
-    f.close()
-
-    # Replace path file for include
-    html = html.replace("css/metro-bootstrap.min.css", "file://" + sys.path[0] + "/css/metro-bootstrap.min.css")
-    html = html.replace("js/jquery/jquery.min.js", "file://" + sys.path[0] + "/js/jquery/jquery.min.js")
-    html = html.replace("js/jquery/jquery.widget.min.js", "file://" + sys.path[0] + "/js/jquery/jquery.widget.min.js")
-    html = html.replace("js/metro.min.js", "file://" + sys.path[0] + "/js/metro.min.js")
-    html = html.replace("js/metro-notify.js", "file://" + sys.path[0] + "/js/metro-notify.js")
-    html = html.replace("js/jquery.mousewheel.js", "file://" + sys.path[0] + "/js/jquery.mousewheel.js")
-    html = html.replace("css/iconFont.min.css", "file://" + sys.path[0] + "/css/iconFont.min.css")
 
     app = QtGui.QApplication([""])
 
@@ -128,9 +128,12 @@ if __name__ == '__main__':
     mainFrame.setScrollBarPolicy(QtCore.Qt.Horizontal, QtCore.Qt.ScrollBarAlwaysOff)
     mainFrame.setScrollBarPolicy(QtCore.Qt.Vertical, QtCore.Qt.ScrollBarAlwaysOff)
 
+    # Thread setting
     bridge = Bridge()
+
+    # Bridge
     mainFrame.addToJavaScriptWindowObject("pyBridge", bridge)
-    webView.setHtml(html)
+    webView.load(QtCore.QUrl("file://" + sys.path[0] + "/gui.html"))
 
     # Window setting
     window = QtGui.QMainWindow()
