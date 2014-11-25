@@ -94,7 +94,6 @@ class Bridge(QtCore.QObject):
     @QtCore.pyqtSlot(str)
     def search(self, target):
 
-        #QtGui.QMessageBox.information(None, "Info", msg)
         c = Target(target)
         retour = []
         for u in c.relatedUsers:
@@ -116,6 +115,12 @@ if __name__ == '__main__':
     html = html.replace("js/metro-notify.js", "file://" + sys.path[0] + "/js/metro-notify.js")
 
     app = QtGui.QApplication([""])
+
+    # Get desktop info
+    desktop = QtGui.QDesktopWidget()
+    geom = desktop.availableGeometry()
+
+    # Webkit and bridge
     webView = QtWebKit.QWebView()
     mainFrame = webView.page().mainFrame()
     mainFrame.setScrollBarPolicy(QtCore.Qt.Horizontal, QtCore.Qt.ScrollBarAlwaysOff)
@@ -125,7 +130,12 @@ if __name__ == '__main__':
     mainFrame.addToJavaScriptWindowObject("pyBridge", bridge)
     webView.setHtml(html)
 
+    # Window setting
     window = QtGui.QMainWindow()
+    window.resize(800, 600)
+    window.move(int((geom.width()-800)/2.0), int((geom.height()-600)/2.0))
+    window.setWindowTitle('Data harvest')
+
     window.setCentralWidget(webView)
     window.show()
 

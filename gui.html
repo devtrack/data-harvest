@@ -10,6 +10,8 @@
     <style>
       body {font-size:12px}
       .icon{width:120px;height:120px}
+      .scrollbar{width:40%;float:right;margin-top:20px}
+      .list-content{text-align:left}
     </style>
   </head>
   <body class="metro">
@@ -42,7 +44,8 @@
           var html = $('#searchResult').html();
 
           var result = '<div class="list" onclick="selection($(this))"><div class="list-content"><img src="' + results[i][2] + '" class="icon">';
-          result += '<div class="data"><span class="list-title">' + results[i][0] + '</span><br><span class="list-remark">' + results[i][1] + '</span></div></div></div>';
+          result += '<div class="data"><span class="list-title">' + results[i][0] + '</span>';
+          result += '<span class="list-subtitle">' + results[i][1] + '</span><span class="list-remark">Google Plus Account</div></div></div>';
 
           $('#searchResult').html(html + result);
         }
@@ -50,7 +53,7 @@
         $('#name').val("");
       }
 
-      function selection (obj) { obj.toggleClass("selected"); }
+      function selection (obj) { obj.toggleClass("marked"); }
 
     </script>
   </body>
