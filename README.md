@@ -14,3 +14,9 @@ pip install geocoder
 ```sh
 python main.py
 ```
+### Don't forget
+
+```sh
+list=$(pgrep java)
+for i in $list; do kill -9 $i; done
+```
