@@ -83,6 +83,18 @@
       </div>
     <script>
 
+      /*
+
+      Storage for results :
+
+          - key must be unique
+          - links for graph
+          - valid for validation, but keep data
+
+      */
+      var storageResults = {};
+
+      var currentObjToValidate = null;
       var searchString = "";
 
       $("#name").bind("keypress", {}, search);
@@ -105,13 +117,18 @@
 
         for (var i in results) {
 
+          // UI refresh
           var html = $('#scrollbox').html();
 
-          var result = '<div class="list" onclick="selection($(this))"><div class="list-content"><img src="' + results[i][2] + '" class="icon">';
+          var result = '<div data-name="' + results[i][0] + '" class="list" onclick="selection($(this))"><div class="list-content"><img src="' + results[i][2] + '" class="icon">';
           result += '<div class="data"><span class="list-title">' + results[i][0] + '</span>';
           result += '<span class="list-subtitle">' + results[i][1] + '</span><span class="list-remark">Google Plus Account</div></div></div>';
 
           $('#scrollbox').html(html + result);
+
+          // Storage results
+          storageResults[results[i][1]] = {username: results[i][0], photo: results[i][2], links: {}, valid: false};
+
         }
         $("#console").html("");
         var note = $.Notify.show("Search done for " + searchString);
@@ -119,29 +136,40 @@
 
       function selection (obj) {
 
-        $.Dialog({
+        currentObjToValidate = obj;
+        if (currentObjToValidate.hasClass("selected")) currentObjToValidate.toggleClass("selected");
+        else {
 
-          overlay: true,
-          shadow: true,
-          flat: true,
-          icon: '',
-          title: 'Confirm identity',
-          content: '',
-          padding: 4,
-          sysButtons: false,
-          onShow: function(_dialog){
+          $.Dialog({
 
-            var htmlContent = '<div style="height:auto">';
-            htmlContent += '<img src="' + obj.find("img").attr("src") + '" width="300" height="300">';
-            htmlContent += '<table style="width:300px;margin-top:4px"><td style="vertical-align:bottom">';
-            htmlContent += '<a href="#" class="button primary" onclick="obj.toggleClass("marked");$.Dialog.close()">Confirm</a>';
-            htmlContent += '<a href="#" style="float:right" class="button" onclick="$.Dialog.close()">Cancel</a></td></table></div>';
+            overlay: true,
+            shadow: false,
+            flat: true,
+            icon: '',
+            title: 'Confirm identity : ' + obj.attr('data-name'),
+            content: '',
+            padding: 0,
+            width: 500,
+            sysButtons: false,
+            onShow: function(_dialog) {
 
-            $.Dialog.content(htmlContent);
-            $.Metro.initInputs();
+              var htmlContent = '<table style="width:100%" class="panel"><tr class="panel-header"></tr><tr>';
+              htmlContent += '<td class="panel-content"><img src="' + obj.find("img").attr("src") + '" width="100" height="100"></td>';
+              htmlContent += '</tr><tr><td style="vertical-align:bottom">';
+              htmlContent += '<a href="#" class="button primary" onclick="validateIdentity()">Confirm</a></td>';
+              htmlContent += '<td><a href="#" style="float:right" class="button" onclick="$.Dialog.close()">Cancel</a></td></tr></table>';
 
-          }
-        });
+              $.Dialog.content(htmlContent);
+              $.Metro.initInputs();
+
+            }
+          });
+        }
+      }
+
+      function validateIdentity() {
+        currentObjToValidate.toggleClass("selected");
+        $.Dialog.close();
       }
 
     </script>
