@@ -5,7 +5,7 @@ import urllib
 import geocoder
 import requests
 import json
-import re, os
+import re
 
 # Adding gui for project
 from PyQt4 import QtCore, QtGui, QtWebKit
