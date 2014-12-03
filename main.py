@@ -13,9 +13,9 @@ from Cython.Build import cythonize
 setup(
 
     name = 'Data harvest',
-    ext_modules = cythonize("lib/*.pyx"),
+    ext_modules = cythonize("src/*.pyx"),
     license = "GNU GPL Version 3",
-    script_args = ['build_ext', '--build-lib=lib']
+    script_args = ['build_ext', '--build-lib=lib', '--build-temp=.build']
 )
 
 from searchEngine import *
