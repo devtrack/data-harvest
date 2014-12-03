@@ -18,6 +18,7 @@ setup(
     script_args = ['build_ext', '--build-lib=lib', '--build-temp=.build']
 )
 
+sys.path.append(sys.path[0] + '/lib')
 from searchEngine import *
 
 '''
