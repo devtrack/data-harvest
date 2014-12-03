@@ -104,7 +104,10 @@
 
           e.preventDefault();
           searchString = $('#name').val();
-          pyBridge.search(searchString);
+
+          var query = {params: searchString, method: "googlePlusSearch", callback:"searchCallback"};
+          pyBridge.runThread(JSON.stringify(query));
+
           $('#name').val("");
           $("#scrollbox").html('<table style="height:555px;width:100%;background-color: #F5F5F5;"><td style="text-align:center;vertical-align:center"><img src="img/loading.gif" width="40" height="40"><br><br><span style="font-size:12px;color:#666">Searching on Google+</span></td></table>')
 
@@ -120,7 +123,7 @@
           // UI refresh
           var html = $('#scrollbox').html();
 
-          var result = '<div data-name="' + results[i][0] + '" class="list" onclick="selection($(this))"><div class="list-content"><img src="' + results[i][2] + '" class="icon">';
+          var result = '<div data-id="' + results[i][1] + '" data-name="' + results[i][0] + '" class="list" onclick="selection($(this))"><div class="list-content"><img src="' + results[i][2] + '" class="icon">';
           result += '<div class="data"><span class="list-title">' + results[i][0] + '</span>';
           result += '<span class="list-subtitle">' + results[i][1] + '</span><span class="list-remark">Google Plus Account</div></div></div>';
 
@@ -155,7 +158,7 @@
 
               var htmlContent = '<table style="width:100%" class="panel"><tr class="panel-header"></tr><tr>';
               htmlContent += '<td class="panel-content"><img src="' + obj.find("img").attr("src") + '" width="100" height="100"></td>';
-              htmlContent += '</tr><tr><td><button href="#" class="button" onclick="testConnection()">Test connection</button></td><td>';
+              htmlContent += '</tr><tr><td><button href="#" class="button" onclick="testConnection(\'' + obj.attr("data-id") + '\')">Test connection</button></td><td>';
               htmlContent += '<button href="#" style="float:right" class="button" onclick="$.Dialog.close()">Cancel</button></td>';
               htmlContent += '<td><button href="#" class="button primary" onclick="validateIdentity()">Confirm</button></td></tr></table>';
 
@@ -168,12 +171,23 @@
       }
 
       function validateIdentity() {
+
         currentObjToValidate.toggleClass("selected");
         $.Dialog.close();
+
       }
 
-      function testConnection() {
-        return;
+      function testConnection(target) {
+
+        var query = {params: target, method: "googlePlusSearchFriends", callback:"searchFriendsCallback"};
+        pyBridge.runThread(JSON.stringify(query));
+
+      }
+
+      function searchFriendsCallback(results) {
+
+        alert(results);
+
       }
 
     </script>

@@ -1,11 +1,6 @@
 # -*- coding: utf8 -*-
 
 import sys
-import imp
-import json
-
-# Adding gui for project
-from PyQt4 import QtCore, QtGui, QtWebKit
 
 from distutils.core import setup
 from Cython.Build import cythonize
@@ -19,7 +14,8 @@ setup(
 )
 
 sys.path.append(sys.path[0] + '/lib')
-from searchEngine import *
+
+from threadEngine import *
 
 '''
 
@@ -60,53 +56,6 @@ class Person:
 
 '''
 
-class Target(QtCore.QThread):
-
-    def __init__(self, target):
-
-        QtCore.QThread.__init__(self)
-        self.username = str(target)
-        self.relatedUsers = []
-
-    def run(self):
-
-        users = googlePlusSearch(self.username)
-        self.emit(QtCore.SIGNAL("threadDone(QString)"), json.dumps(users))
-
-
-class TargetFriends(QtCore.QThread):
-
-    def __init__(self, target):
-
-        QtCore.QThread.__init__(self)
-        self.username = str(target)
-
-
-
-class Bridge(QtCore.QObject):
-
-    def __init__(self):
-        QtCore.QObject.__init__(self)
-
-    @QtCore.pyqtSlot(str)
-    def search(self, target):
-
-        self.c = Target(target)
-        self.connect(self.c, QtCore.SIGNAL("threadDone(QString)"), self.searchThreadDone)
-
-        self.c.start()
-
-    def searchThreadDone(self, info):
-
-        mainFrame.evaluateJavaScript("searchCallback(%s)" % info)
-        self.disconnect(self.c, QtCore.SIGNAL("threadDone(QString)"), self.searchThreadDone)
-
-        self.c.terminate()
-
-    def searchFriends(self, target):
-
-        self.c = TargetFriends(target)
-
 
 if __name__ == '__main__':
 
@@ -123,7 +72,7 @@ if __name__ == '__main__':
     mainFrame.setScrollBarPolicy(QtCore.Qt.Vertical, QtCore.Qt.ScrollBarAlwaysOff)
 
     # Bridge
-    bridge = Bridge()
+    bridge = Bridge(mainFrame)
     mainFrame.addToJavaScriptWindowObject("pyBridge", bridge)
     webView.load(QtCore.QUrl("file://" + sys.path[0] + "/gui.html"))
 

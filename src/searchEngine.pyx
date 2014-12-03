@@ -8,12 +8,17 @@ import re
 cdef inline object googlePlusQuery = re.compile('\"([0-9]+)\"\,\,\"https\:\/\/plus\.google\.com\/[0-9]+\"\]\n\,\[\"([\w\ \'\-]+)\"\,{8}\"((?:https\:)?\/\/[a-zA-Z0-9\-\/\_\.]+)\"', re.UNICODE)
 cdef inline object googlePlusToken = re.compile('\"\w{30,}', re.UNICODE)
 
+cdef inline object googlePlusId = re.compile('[0-9]{21}', re.UNICODE)
+cdef inline object googleVerify = re.compile('\<meta\ itemprop\=\"name\"\ content\=\"([\w\ \'\-]+)\"\>\<meta\ itemprop\=\"image\" content\=\"((?:https\:)?\/\/[a-zA-Z0-9\-\/\_\.]+)\"\>')
+
+# header
+cdef inline object headers = {'x-same-domain' : 1, 'origin' : 'https://plus.google.com', 'referer' : 'https://plus.google.com/'}
+
 def googlePlusSearch(object username):
 
     cdef object userList = []
 
     cdef object pageToken = ""
-    cdef object headers = {'x-same-domain' : 1, 'origin' : 'https://plus.google.com', 'referer' : 'https://plus.google.com/'}
     cdef object data = {'f.req' : '[["'+ username +'",2,,,,,,],['+ pageToken +'],[,,,,,[,,,,[,],]],,,]'}
 
     cdef int count = 20
@@ -33,8 +38,27 @@ def googlePlusSearch(object username):
             userList.append([user, ident, photo])
 
         pageToken = re.search(googlePlusToken, text)
-        
+
         if pageToken == None: break
         else: data = {'f.req' : '[["'+ username +'",2,,,,,,],['+ pageToken.group() +'"],[,,,,,[,,,,[,],]],,,]'}
 
     return userList
+
+def googlePlusSearchFriends(object userid):
+
+  text = requests.get("https://plus.google.com/"+ userid +"/posts",headers=headers).text
+  parsed = re.findall(googlePlusId, text)
+
+  cdef object friendsId = []
+  cdef object friendsList = []
+
+  for p in parsed:
+    if p != userid and p not in friendsId: friendsId.append(p)
+
+  for p in friendsId:
+    friendText = requests.get("https://plus.google.com/"+ p +"/posts", headers=headers).text
+    match = re.search(googleVerify, friendText)
+
+    if match != None: friendsList.append([p, match.group(1), match.group(2)])
+
+  return friendsList
