@@ -7,18 +7,16 @@ import json
 # Adding gui for project
 from PyQt4 import QtCore, QtGui, QtWebKit
 
-# Testing build
-try: imp.find_module('searchEngine')
-except ImportError:
+from distutils.core import setup
+from Cython.Build import cythonize
 
-    from distutils.core import setup
-    from Cython.Build import cythonize
+setup(
 
-    setup(
-        name = 'Search Engine',
-        ext_modules = cythonize("searchEngine.pyx"),
-        script_args = ['build_ext', '--inplace']
-    )
+    name = 'Data harvest',
+    ext_modules = cythonize("lib/*.pyx"),
+    license = "GNU GPL Version 3",
+    script_args = ['build_ext', '--build-lib=lib']
+)
 
 from searchEngine import *
 
