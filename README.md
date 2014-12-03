@@ -6,7 +6,7 @@ Data harvesting for OSINT
 
 ```sh
 apt-get install pip pyqt4-dev-tools
-pip install geocoder
+pip install cython
 ```
 
 ### Use

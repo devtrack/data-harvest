@@ -1,18 +1,30 @@
 # -*- coding: utf8 -*-
 
 import sys
-import urllib
-import geocoder
-import requests
+import imp
 import json
-import re
 
 # Adding gui for project
 from PyQt4 import QtCore, QtGui, QtWebKit
 
-# regular expression
-googlePlusQuery = re.compile('\"([0-9]+)\"\,\,\"https\:\/\/plus\.google\.com\/[0-9]+\"\]\n\,\[\"([\w\ \'\-]+)\"\,{8}\"((?:https\:)?\/\/[a-zA-Z0-9\-\/\_\.]+)\"', re.UNICODE)
-googlePlusToken = re.compile('\"\w{30,}', re.UNICODE)
+# Testing build
+try: imp.find_module('searchEngine')
+except ImportError:
+
+    from distutils.core import setup
+    from Cython.Build import cythonize
+
+    setup(
+        name = 'Search Engine',
+        ext_modules = cythonize("searchEngine.pyx"),
+        script_args = ['build_ext', '--inplace']
+    )
+
+from searchEngine import *
+
+'''
+
+import geocoder
 
 class Geolocation:
 
@@ -24,9 +36,9 @@ class Geolocation:
     def getCoords(self): return self.data.lat, self.data.lng
     def getAddress(self): return self.data.address
 
-    '''c = Geodata(sys.argv[1])
+    c = Geodata(sys.argv[1])
     coords = c.getCoords()
-    print str(coords[0]) + ", " + str(coords[1])'''
+    print str(coords[0]) + ", " + str(coords[1])
 
 class GoogleAccount:
 
@@ -47,6 +59,8 @@ class Person:
             self.username = input[1]
             self.googleAccount = GoogleAccount(input)
 
+'''
+
 class Target(QtCore.QThread):
 
     def __init__(self, target):
@@ -57,39 +71,18 @@ class Target(QtCore.QThread):
 
     def run(self):
 
-        users = self.googlePlusSearch(self.username)
+        users = googlePlusSearch(self.username)
         self.emit(QtCore.SIGNAL("threadDone(QString)"), json.dumps(users))
 
-    def googlePlusSearch(self, username):
 
-        userList = []
+class TargetFriends(QtCore.QThread):
 
-        pageToken = ""
-        headers = {'x-same-domain' : 1, 'origin' : 'https://plus.google.com', 'referer' : 'https://plus.google.com/'}
-        data = {'f.req' : '[["'+ username +'",2,,,,,,],['+ pageToken +'],[,,,,,[,,,,[,],]],,,]'}
+    def __init__(self, target):
 
-        count = 20
-        while count == 20:
+        QtCore.QThread.__init__(self)
+        self.username = str(target)
 
-            text = requests.post("https://plus.google.com/_/s/query", data=data, headers=headers).text
-            parsed = re.findall(googlePlusQuery, text)
-            count = len(parsed)
 
-            for p in parsed:
-
-                ident = p[0]
-                user = p[1]
-                photo = p[2]
-
-                if photo.startswith("https:") == False: photo = "https:" + photo
-                userList.append([user, ident, photo])
-
-            pageToken = re.search(googlePlusToken, text)
-            if pageToken == None: break
-            else:
-                data = {'f.req' : '[["'+ username +'",2,,,,,,],['+ pageToken.group() +'"],[,,,,,[,,,,[,],]],,,]'}
-
-        return userList
 
 class Bridge(QtCore.QObject):
 
@@ -108,6 +101,13 @@ class Bridge(QtCore.QObject):
 
         mainFrame.evaluateJavaScript("searchCallback(%s)" % info)
         self.disconnect(self.c, QtCore.SIGNAL("threadDone(QString)"), self.searchThreadDone)
+
+        self.c.terminate()
+
+    def searchFriends(self, target):
+
+        self.c = TargetFriends(target)
+
 
 if __name__ == '__main__':
 
