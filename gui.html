@@ -7,24 +7,23 @@
 
 
     <script src="js/jquery/jquery.min.js"></script>
-    <script src="js/jquery/jquery.widget.min.js"></script>
+    <script src="js/jquery/jquery-ui.min.js"></script>
+    <!--<script src="js/jquery/jquery.widget.min.js"></script>-->
     <script src="js/metro.min.js"></script>
     <script src="js/metro-notify.js"></script>
     <script src="js/metro-dialog.js"></script>
-    <script src="js/jquery/jquery-ui.min.js"></script>
-
     <style>
       html, body {font-size:12px;overflow: hidden;}
       .icon{width:120px;height:120px}
       #canvas
       {
         float:left;
-        height:555px;
+        height:100%;
         width:60%
       }
       #scrollbox
       {
-        height: 555px;
+        height: 100%;
         width: 40%;
         background: #F5F5F5;
         overflow-y: scroll;
@@ -53,6 +52,7 @@
         }
       .list-content{text-align:left}
       .metro .listview-outlook .list:active{background-color: #F5F5F5}
+      .notifyWrap{display: none}
     </style>
   </head>
   <body class="listview-outlook">
@@ -74,10 +74,20 @@
               </div>
             </form>
           </div>
+          <div class="element">
+            <table class="notifyWrap" style="height:100%;width:100%;background-color: rgba(0,0,0,0);padding:0;margin:0">
+              <td style="text-align:center;vertical-align:center"><img src="img/loading.gif" width="16" height="16"></td>
+              <td style="padding-left:10px"><span class="threadMessage" style="font-size:12px;color:#ccc"></span></td>
+            </table>
+          </div>
         </div>
       </div>
     </nav>
-      <div id="scrollbox"></div>
+      <div id="scrollbox">
+        <table class="notifyWrap" style="height:100%;width:100%;background-color: rgba(0,0,0,0);padding:0;margin:0">
+          <td style="text-align:center;vertical-align:center"><img src="img/loading.gif" width="40" height="40"><br><br><span class="threadMessage" style="font-size:12px;color:#666"></span></td>
+        </table>
+      </div>
       <div id="canvas"></div>
     <script>
 
@@ -103,18 +113,20 @@
           e.preventDefault();
           searchString = $('#name').val();
 
-          var query = {params: searchString, method: "googlePlusSearch", callback:"searchCallback"};
+          var query = {params: searchString, method: "googlePlusSearch", callback:"searchCallback", notify: "searchNotify"};
           pyBridge.runThread(JSON.stringify(query));
 
           $('#name').val("");
-          $("#scrollbox").html('<table style="height:555px;width:100%;background-color: #F5F5F5;"><td style="text-align:center;vertical-align:center"><img src="img/loading.gif" width="40" height="40"><br><br><span style="font-size:12px;color:#666">Searching on Google+</span></td></table>')
+          $('.notifyWrap').css("display", "block");
 
         }
       }
 
+      function searchNotify(results) { $(".threadMessage").html(results); }
+
       function searchCallback(results) {
 
-        $('#scrollbox').html("");
+        $('.notifyWrap').css("display", "none");
 
         for (var i in results) {
 
@@ -204,22 +216,10 @@
 
         },
         drop: function(event, ui) {
+          //var code = $(ui.helper).clone().wrap('<div>').parent().html();
+          //alert(code);
         }
       });
-
-      window.onresize = function () {
-
-        /*$('body').width(window.innerWidth);
-        $('body').height(window.innerHeight);*/
-
-        var ht = $('body').height() - 45;
-        $("#scrollbox").css({height: ht+"px"});
-        $("#canvas").css({height: ht+"px"});
-
-      };
-
-      $(window).resize();
-
     </script>
   </body>
 </html>
