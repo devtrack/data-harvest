@@ -4,11 +4,11 @@
 
     <link rel="stylesheet" href="css/metro-bootstrap.min.css">
     <link rel="stylesheet" href="css/iconFont.min.css">
-
+    <link rel="stylesheet" href="http://terminal.jcubic.pl/css/jquery.terminal.css">
 
     <script src="js/jquery/jquery.min.js"></script>
     <script src="js/jquery/jquery-ui.min.js"></script>
-    <!--<script src="js/jquery/jquery.widget.min.js"></script>-->
+    <script src="js/jquery/jquery.mousewheel.min.js"></script>
     <script src="js/metro.min.js"></script>
     <script src="js/metro-notify.js"></script>
     <script src="js/metro-dialog.js"></script>
@@ -89,8 +89,8 @@
         </table>
       </div>
       <div id="canvas"></div>
+      <div id="term"></div>
     <script>
-
       /*
 
       Storage for results :
@@ -104,6 +104,17 @@
 
       var currentObjToValidate = null;
       var searchString = "";
+
+      /*
+
+      Query for python :
+
+        - params for python function
+        - method is name of python function
+        - callback javascript function for results
+        - notify from python
+
+      */
 
       $("#name").bind("keypress", {}, search);
       function search(e) {
