@@ -47,18 +47,17 @@ def googlePlusSearch(object username):
 def googlePlusSearchFriends(object userid):
 
   text = requests.get("https://plus.google.com/"+ userid +"/posts",headers=headers).text
-  parsed = re.findall(googlePlusId, text)
+  parsed = set(re.findall(googlePlusId, text))
 
-  cdef object friendsId = []
   cdef object friendsList = []
 
   for p in parsed:
-    if p != userid and p not in friendsId: friendsId.append(p)
 
-  for p in friendsId:
-    friendText = requests.get("https://plus.google.com/"+ p +"/posts", headers=headers).text
-    match = re.search(googleVerify, friendText)
+    if p != userid:
+      
+      friendText = requests.get("https://plus.google.com/"+ p +"/posts", headers=headers).text
+      match = re.search(googleVerify, friendText)
 
-    if match != None: friendsList.append([p, match.group(1), match.group(2)])
+      if match != None: friendsList.append([p, match.group(1), match.group(2)])
 
   return friendsList

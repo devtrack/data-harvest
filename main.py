@@ -59,7 +59,7 @@ class Person:
 
 if __name__ == '__main__':
 
-    app = QtGui.QApplication([""])
+    app = QtGui.QApplication(sys.argv)
 
     # Get desktop info
     desktop = QtGui.QDesktopWidget()
@@ -85,4 +85,6 @@ if __name__ == '__main__':
     window.setCentralWidget(webView)
     window.show()
 
-    sys.exit(app.exec_())
+    app.exec_()
+    app.deleteLater()
+    sys.exit()
