@@ -5,12 +5,12 @@ Data harvesting for OSINT
 ### Installation
 
 ```sh
-apt-get install pip pyqt4-dev-tools
-pip install cython
+sudo apt-get install python3-pip python3-pyqt5 python3-pyqt5.qtwebkit
+sudo pip3 install cython
 ```
 
 ### Use
 
 ```sh
-python main.py
+python3 main.py
 ```

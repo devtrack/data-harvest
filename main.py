@@ -59,14 +59,14 @@ class Person:
 
 if __name__ == '__main__':
 
-    app = QtGui.QApplication(sys.argv)
+    app = QtWidgets.QApplication(sys.argv)
 
     # Get desktop info
-    desktop = QtGui.QDesktopWidget()
+    desktop = QtWidgets.QDesktopWidget()
     geom = desktop.availableGeometry()
 
     # Webkit view setting
-    webView = QtWebKit.QWebView()
+    webView = QtWebKitWidgets.QWebView()
     mainFrame = webView.page().mainFrame()
     mainFrame.setScrollBarPolicy(QtCore.Qt.Horizontal, QtCore.Qt.ScrollBarAlwaysOff)
     mainFrame.setScrollBarPolicy(QtCore.Qt.Vertical, QtCore.Qt.ScrollBarAlwaysOff)
@@ -77,7 +77,7 @@ if __name__ == '__main__':
     webView.load(QtCore.QUrl("file://" + sys.path[0] + "/gui.html"))
 
     # Window setting
-    window = QtGui.QMainWindow()
+    window = QtWidgets.QMainWindow()
     window.resize(800, 600)
     window.move(int((geom.width()-800)/2.0), int((geom.height()-600)/2.0))
     window.setWindowTitle('Data harvest')

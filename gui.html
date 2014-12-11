@@ -4,7 +4,6 @@
 
     <link rel="stylesheet" href="css/metro-bootstrap.min.css">
     <link rel="stylesheet" href="css/iconFont.min.css">
-    <link rel="stylesheet" href="http://terminal.jcubic.pl/css/jquery.terminal.css">
 
     <script src="js/jquery/jquery.min.js"></script>
     <script src="js/jquery/jquery-ui.min.js"></script>
@@ -18,78 +17,154 @@
       #canvas
       {
         float:left;
-        height:100%;
-        width:60%
+        height: -webkit-calc(100% - 45px);
+        width:60%;
+        min-height:100%;
       }
       #scrollbox
       {
-        height: 100%;
+        height: -webkit-calc(100% - 45px);
         width: 40%;
         background: #F5F5F5;
-        overflow-y: scroll;
-        overflow-x: visible;
         float:right;
+        overflow-y:scroll;
+      }
+      .term {
+        font-family: "Courier New",courier,fixed,monospace;
+        font-size: 13px;
+        color: #94aad6;
+        background: none;
+        letter-spacing: 1px;
+      }
+      .term .termReverse {
+        color: #232e45;
+        background: #95a9d5;
+      }
+      #term table {
+        width:100%;
+        background-color:#232e45;
+        margin:0;
+        padding:0;
+        border:none
+      }
+      #term table tbody, #term table tr, #term table td {
+        margin:0;
+        padding:0;
+        border:none
       }
       #scrollbox::-webkit-scrollbar-track
       {
-        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-        background-color: #F5F5F5;
+        background-color: #ccc;
       }
 
       #scrollbox::-webkit-scrollbar
       {
-        width: 10px;
-        background-color: #F5F5F5;
+        width: 6px;
+        background-color: #232e45;
       }
 
       #scrollbox::-webkit-scrollbar-thumb
       {
-        background-color: #0ae;
-
-        background-image: -webkit-gradient(linear, 0 0, 0 100%,
-          color-stop(.5, rgba(255, 255, 255, .2)),
-          color-stop(.5, transparent), to(transparent));
-        }
+        background-color: #232e45;
+      }
       .list-content{text-align:left}
       .metro .listview-outlook .list:active{background-color: #F5F5F5}
+
+      span[class*="l-"] {
+
+        /*display: inline-block;*/
+        background: #fff;
+        width: 4px;
+        height: 4px;
+
+        -webkit-border-radius: 100%;
+        -moz-border-radius: 100%;
+        border-radius: 100%;
+
+        position: relative;
+
+        -webkit-animation: loader 3s infinite;
+        -webkit-animation-timing-function: cubic-bezier(0.030, 0.615, 0.995, 0.415);
+        -webkit-animation-fill-mode: both;
+        -moz-animation: loader 3s infinite;
+        -moz-animation-timing-function: cubic-bezier(0.030, 0.615, 0.995, 0.415);
+        -moz-animation-fill-mode: both;
+        -ms-animation: loader 3s infinite;
+        -ms-animation-timing-function: cubic-bezier(0.030, 0.615, 0.995, 0.415);
+        -ms-animation-fill-mode: both;
+        animation: loader 3s infinite;
+        animation-timing-function: cubic-bezier(0.030, 0.615, 0.995, 0.415);
+        animation-fill-mode: both;
+      }
+
+      span.l-1 { -webkit-animation-delay: 1s; -moz-animation-delay: 1s; -ms-animation-delay: 1s; animation-delay: 1s; }
+      span.l-2 { -webkit-animation-delay: 0.8s; -moz-animation-delay: 0.8s; -ms-animation-delay: 0.8s; animation-delay: 0.8s; }
+      span.l-3 { -webkit-animation-delay: 0.6s; -moz-animation-delay: 0.6s; -ms-animation-delay: 0.6s; animation-delay: 0.6s; }
+      span.l-4 { -webkit-animation-delay: 0.4s; -moz-animation-delay: 0.4s; -ms-animation-delay: 0.4s; animation-delay: 0.4s; }
+
+      @-webkit-keyframes loader {
+        0% { -webkit-transform: translateX(-30px); opacity: 0; }
+        25% { opacity: 1; }
+        50% { -webkit-transform: translateX(30px); opacity: 0; }
+        100% { opacity: 0; }
+      }
+      @-moz-keyframes loader {
+        0% { -moz-transform: translateX(-30px); opacity: 0; }
+        25% { opacity: 1; }
+        50% { -moz-transform: translateX(30px); opacity: 0; }
+        100% { opacity: 0; }
+      }
+      @-ms-keyframes loader {
+        0% { -ms-transform: translateX(-30px); opacity: 0; }
+        25% { opacity: 1; }
+        50% { -ms-transform: translateX(30px); opacity: 0; }
+        100% { opacity: 0; }
+      }
+      @keyframes loader {
+        0% { transform: translateX(-30px); opacity: 0; }
+        25% { opacity: 1; }
+        50% { transform: translateX(30px); opacity: 0; }
+        100% { opacity: 0; }
+      }
       .notifyWrap{display: none}
     </style>
   </head>
   <body class="listview-outlook">
-    <nav class="navigation-bar dark">
-      <div class="navigation-bar-content">
-        <button href="#" class="element"><span class="icon-grid-view"></span> Data harvest </button>
-        <span class="element-divider"></span>
-        <a class="pull-menu" href="#"></a>
-
-        <div class="no-tablet-portrait">
-          <button class="element brand" href="#"><span class="icon-printer"></span></button>
+      <nav class="navigation-bar dark">
+        <div class="navigation-bar-content">
+          <button href="#" class="element"><span class="icon-grid-view"></span> Data harvest </button>
           <span class="element-divider"></span>
+          <a class="pull-menu" href="#"></a>
 
-          <div class="element input-element">
-            <form>
-              <div class="input-control text">
-                <input id="name" type="text" placeholder="Search...">
-                <button class="btn-search"></button>
-              </div>
-            </form>
-          </div>
-          <div class="element">
-            <table class="notifyWrap" style="height:100%;width:100%;background-color: rgba(0,0,0,0);padding:0;margin:0">
-              <td style="text-align:center;vertical-align:center"><img src="img/loading.gif" width="16" height="16"></td>
-              <td style="padding-left:10px"><span class="threadMessage" style="font-size:12px;color:#ccc"></span></td>
-            </table>
+          <div class="no-tablet-portrait">
+            <button class="element brand" href="#"><span class="icon-printer"></span></button>
+            <span class="element-divider"></span>
+
+            <div class="element input-element">
+              <form>
+                <div class="input-control text">
+                  <input id="name" type="text" placeholder="Search...">
+                  <button class="btn-search"></button>
+                </div>
+              </form>
+            </div>
+            <div class="element">
+              <span class="notifyWrap l-1"></span>
+              <span class="notifyWrap l-2"></span>
+              <span class="notifyWrap l-3"></span>
+              <span class="notifyWrap l-4"></span>
+            </div>
           </div>
         </div>
+      </nav>
+      <div id="kitPrincipal">
+        <div id="scrollbox">
+          <table class="notifyWrap" style="height:100%;width:100%;background-color: rgba(0,0,0,0);padding:0;margin:0">
+            <td style="text-align:center;vertical-align:center"><img src="img/loading.gif" width="40" height="40"><br><br><span class="threadMessage" style="font-size:12px;color:#666"></span></td>
+          </table>
+        </div>
+        <div id="canvas"></div>
       </div>
-    </nav>
-      <div id="scrollbox">
-        <table class="notifyWrap" style="height:100%;width:100%;background-color: rgba(0,0,0,0);padding:0;margin:0">
-          <td style="text-align:center;vertical-align:center"><img src="img/loading.gif" width="40" height="40"><br><br><span class="threadMessage" style="font-size:12px;color:#666"></span></td>
-        </table>
-      </div>
-      <div id="canvas"></div>
-      <div id="term"></div>
     <script>
       /*
 
@@ -128,7 +203,7 @@
           pyBridge.runThread(JSON.stringify(query));
 
           $('#name').val("");
-          $('.notifyWrap').css("display", "block");
+          $('.notifyWrap').css("display", "inline-block");
 
         }
       }
@@ -138,6 +213,7 @@
       function searchCallback(results) {
 
         $('.notifyWrap').css("display", "none");
+        $('#scrollbox').html("");
 
         for (var i in results) {
 
@@ -231,6 +307,57 @@
           //alert(code);
         }
       });
+
+      //============== terminal =============//
+      /*$(document).ready(function () {
+
+        var term = new Terminal({
+
+          termDiv:"term",
+          greeting: '',
+          handler: termHandler,
+          exitHandler: termExitHandler,
+          rows: Math.floor((window.innerHeight * 0.3 - 45) / 15 - 1),
+          rowHeight: 15
+        });
+        term.open();
+        function termHandler() {
+
+          this.newLine();
+          var cmd = this.lineBuffer;
+          if (cmd!='') {
+            if (cmd=='clear') {
+              this.clear();
+            }
+            else if (cmd=='exit') {
+              this.close();
+            }
+            else if (cmd=='help') {
+              this.write("");
+            }
+            else {
+
+              try {
+
+                var result = window.eval(cmd);
+                if (result !== undefined) {
+                  this.write(result);
+                }
+              } catch(e) {
+
+                this.write(new String(e));
+              }
+              this.newLine();
+            }
+          }
+          this.prompt();
+        }
+
+        function termExitHandler() { $("#kitPrincipal").css("height","100%"); }
+        $(window).resize(function () {
+          term.rows = Math.floor((window.innerHeight * 0.3 - 45) / 15 - 1);
+        });
+      });*/
     </script>
   </body>
 </html>
