@@ -2,7 +2,7 @@
 
 Data harvesting for OSINT
 
-### Installation
+### Prerequisite
 
 ```sh
 sudo apt-get install python3-pip python3-pyqt5 python3-pyqt5.qtwebkit
